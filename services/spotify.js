@@ -3,9 +3,9 @@ const SpotifyStrategy = require("passport-spotify").Strategy;
 const passport = require("passport");
 require("dotenv").config();
 
-const port = process.env.PORT || 4001;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const SPOTIFY_CALLBACK_URI = process.env.SPOTIFY_CALLBACK_URI;
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -22,7 +22,7 @@ passport.use(
     {
       clientID: CLIENT_ID,
       clientSecret: CLIENT_SECRET,
-      callbackURL: `http://localhost:${port}/api/spotify/callback`,
+      callbackURL: SPOTIFY_CALLBACK_URI,
     },
     function (accessToken, refreshToken, expires_in, profile, done) {
       spotifyApi.setAccessToken(accessToken);
