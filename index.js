@@ -26,9 +26,13 @@ app.get("/", function (req, res) {
   res.send({ user: req.user });
 });
 
-const spotifyRoutes = require("./routes/spotify");
+const authRoutes = require("./routes/auth");
+const statsRoutes = require("./routes/stats");
+const playerRoutes = require("./routes/player");
 
-app.use("/api/spotify", spotifyRoutes);
+app.use("/api", authRoutes);
+app.use("/api/player", playerRoutes);
+app.use("/api/stats", statsRoutes);
 
 app.listen({ port }, () =>
   console.log(`Server running at http://localhost:${port}`)

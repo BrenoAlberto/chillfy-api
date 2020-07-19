@@ -38,7 +38,7 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/api/spotify/auth");
+  res.redirect("/api/auth");
 }
 
 module.exports = {

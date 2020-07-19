@@ -1,31 +1,5 @@
 const router = require("express").Router();
-const {
-  spotifyApi,
-  ensureAuthenticated,
-  passport,
-} = require("../services/spotify");
-
-router.get(
-  "/auth",
-  passport.authenticate("spotify", {
-    scope: [
-      "user-read-email",
-      "user-read-private",
-      "user-top-read",
-      "user-read-currently-playing",
-    ],
-    showDialog: true,
-  }),
-  function (req, res) {}
-);
-
-router.get(
-  "/callback",
-  passport.authenticate("spotify", { failureRedirect: "/login" }),
-  function (req, res) {
-    res.redirect("/");
-  }
-);
+const { spotifyApi, ensureAuthenticated } = require("../services/spotify");
 
 router.get("/top/:type", ensureAuthenticated, async (req, res) => {
   const type = req.params.type.toLowerCase();
