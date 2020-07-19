@@ -1,0 +1,21 @@
+{
+  "name": "spotify-and-chill",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "helmet": "^3.23.3",
+    "passport": "^0.4.1",
+    "passport-spotify": "^1.1.0",
+    "spotify-web-api-node": "^4.0.0"
+  }
+}
