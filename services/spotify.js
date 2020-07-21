@@ -1,6 +1,7 @@
 const SpotifyWebApi = require("spotify-web-api-node");
 const SpotifyStrategy = require("passport-spotify").Strategy;
 const passport = require("passport");
+// const userRepository = require("../repository/user");
 require("dotenv").config();
 
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -23,11 +24,23 @@ passport.use(
       clientID: CLIENT_ID,
       clientSecret: CLIENT_SECRET,
       callbackURL: SPOTIFY_CALLBACK_URI,
+      // passReqToCallback: true,
     },
     function (accessToken, refreshToken, expires_in, profile, done) {
       spotifyApi.setAccessToken(accessToken);
 
-      process.nextTick(function () {
+      process.nextTick(async function () {
+        // let user = await userRepository.getUser({ spotifyId: profile.id });
+        // if (!user) {
+        //   newData = {
+        //     spotifyId: profile.id,
+        //     displayName: profile.displayName,
+        //     refreshToken,
+        //     profilePic: profile.photos[0],
+        //   };
+        //   user = await userRepository.createUser(newData);
+        // }
+
         return done(null, profile);
       });
     }

@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const TrackSchema = new mongoose.Schema(
   {
+    id: {
+      type: String,
+      required: true,
+    },
     album: { type: mongoose.Schema.Types.ObjectId, ref: "Album" },
     artists: [{ type: mongoose.Schema.Types.ObjectId, ref: "Artist" }],
     name: {
