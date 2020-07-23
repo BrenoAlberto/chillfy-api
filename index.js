@@ -36,6 +36,7 @@ const routes = require("./routes");
 app.use(baseApiUrl, routes.auth);
 app.use(`${baseApiUrl}/artist`, routes.artist);
 app.use(`${baseApiUrl}/player`, routes.player);
+app.use(`${baseApiUrl}/track`, routes.track);
 app.use(`${baseApiUrl}/search`, routes.search);
 app.use(`${baseApiUrl}/stats`, routes.stats);
 

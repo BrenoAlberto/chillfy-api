@@ -19,6 +19,7 @@ const TrackSchema = new mongoose.Schema({
   uri: String,
   samples: [
     {
+      _id: false,
       id: { type: mongoose.Schema.Types.ObjectId, ref: "Track" },
       sample_ms: Number,
       type: {

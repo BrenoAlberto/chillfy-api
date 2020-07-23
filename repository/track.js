@@ -6,6 +6,10 @@ async function insertTrack(newData) {
     if (!track) {
       track = new Track(newData);
       await track.save();
+      track.populate
+        .populate("album")
+        .populate("artists")
+        .populate("samples.id");
     }
     return track;
   } catch (e) {
@@ -16,7 +20,9 @@ async function insertTrack(newData) {
 async function updateTrack(id, newData) {
   try {
     const updateQuery = { $set: newData };
-    return await Track.updateOne({ id }, updateQuery, { new: true }).exec();
+    return await Track.findOneAndUpdate({ id }, updateQuery, {
+      new: true,
+    }).exec();
   } catch (e) {
     console.log(e);
   }
@@ -27,8 +33,7 @@ async function getTrack(conditions, optionalFields = {}) {
     const track = await Track.findOne(conditions, optionalFields)
       .populate("album")
       .populate("artists")
-      .populate("samples")
-      .populate("sampledIn")
+      .populate("samples.id")
       .exec();
     return track;
   } catch (e) {

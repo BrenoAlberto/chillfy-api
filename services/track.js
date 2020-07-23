@@ -11,7 +11,7 @@ const { sleep } = require("../utils/util");
 async function insertTrack(trackId, track) {
   if (!track) {
     await sleep(300);
-    track = await spotifyApi.getTrack(trackId);
+    track = (await spotifyApi.getTrack(trackId)).body;
   }
 
   const trackData = {
