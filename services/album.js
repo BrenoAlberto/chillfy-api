@@ -1,4 +1,6 @@
 const albumRepository = require("../repository/album");
+const artistService = require("./artist");
+const artistRepository = require("../repository/artist");
 const { spotifyApi } = require("./spotify");
 const { sleep } = require("../utils/util");
 
@@ -9,13 +11,14 @@ async function insertAlbum(albumId, album) {
 
   if (!registeredAlbum) {
     if (!album) {
-      sleep(300);
-      album = await spotifyApi.getAlbum(albumId);
+      sleep(500);
+      album = await (await spotifyApi.getAlbum(albumId)).body;
     }
 
     const albumData = {
       id: album.id,
       album_type: album.album_type,
+      artists: [],
       // genres: album.
       href: album.href,
       images: album.images,
@@ -25,6 +28,18 @@ async function insertAlbum(albumId, album) {
       tracks: [],
       uri: album.uri,
     };
+
+    for (let z = 0; z < album.artists.length; z++) {
+      const albumArtist = album.artists[z];
+      let artist = await artistRepository.getArtist({
+        id: albumArtist.id,
+      });
+
+      if (!artist) artist = await artistService.insertArtist(albumArtist.id);
+
+      albumData.artists.push(artist._id);
+    }
+
     return await albumRepository.insertAlbum(albumData);
   } else {
     return registeredAlbum;
@@ -32,7 +47,7 @@ async function insertAlbum(albumId, album) {
 }
 
 async function insertAlbums(artistId) {
-  sleep(300);
+  sleep(500);
   let albums = (await spotifyApi.getArtistAlbums(artistId)).body.items;
 
   const ids = [];

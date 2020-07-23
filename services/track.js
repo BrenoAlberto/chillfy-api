@@ -10,7 +10,7 @@ const { sleep } = require("../utils/util");
 
 async function insertTrack(trackId, track) {
   if (!track) {
-    sleep(300);
+    sleep(500);
     track = await spotifyApi.getTrack(trackId);
   }
 
@@ -32,7 +32,7 @@ async function insertTrack(trackId, track) {
       id: trackArtist.id,
     });
 
-    if (!artist) artist = await artistService.insertArtist(artist.id);
+    if (!artist) artist = await artistService.insertArtist(trackArtist.id);
 
     trackData.artists.push(artist._id);
   }
@@ -49,7 +49,7 @@ async function insertTracks(albumId) {
     album: album._id,
   });
 
-  sleep(300);
+  sleep(500);
   const tracks = (await spotifyApi.getAlbumTracks(albumId)).body.items;
 
   if (!registeredTracks || registeredTracks.length !== tracks.length) {

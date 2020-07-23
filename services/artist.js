@@ -8,7 +8,7 @@ async function insertArtist(artistId) {
   let artist = await artistRepository.getArtist({ id: artistId });
 
   if (!artist) {
-    sleep(300);
+    sleep(500);
     artist = (await spotifyApi.getArtist(artistId)).body;
 
     const artistData = {
