@@ -5,25 +5,29 @@ const { sleep } = require("../utils/util");
 //TODO refactor this function so it makes less request to spotify
 
 async function insertArtist(artistId) {
-  let artist = await artistRepository.getArtist({ id: artistId });
+  try {
+    let artist = await artistRepository.getArtist({ id: artistId });
 
-  if (!artist) {
-    sleep(500);
-    artist = (await spotifyApi.getArtist(artistId)).body;
+    if (!artist) {
+      await sleep(300);
+      artist = (await spotifyApi.getArtist(artistId)).body;
 
-    const artistData = {
-      id: artist.id,
-      images: artist.images,
-      genres: artist.genres,
-      name: artist.name,
-      href: artist.href,
-      uri: artist.uri,
-    };
+      const artistData = {
+        id: artist.id,
+        images: artist.images,
+        genres: artist.genres,
+        name: artist.name,
+        href: artist.href,
+        uri: artist.uri,
+      };
 
-    artist = await artistRepository.insertArtist(artistData);
+      artist = await artistRepository.insertArtist(artistData);
+    }
+
+    return artist;
+  } catch (e) {
+    return null;
   }
-
-  return artist;
 }
 
 module.exports = {

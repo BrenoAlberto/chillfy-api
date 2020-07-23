@@ -11,7 +11,7 @@ async function insertAlbum(albumId, album) {
 
   if (!registeredAlbum) {
     if (!album) {
-      sleep(500);
+      await sleep(300);
       album = await (await spotifyApi.getAlbum(albumId)).body;
     }
 
@@ -29,15 +29,17 @@ async function insertAlbum(albumId, album) {
       uri: album.uri,
     };
 
-    for (let z = 0; z < album.artists.length; z++) {
-      const albumArtist = album.artists[z];
-      let artist = await artistRepository.getArtist({
-        id: albumArtist.id,
-      });
+    if (album.artists) {
+      for (let z = 0; z < album.artists.length; z++) {
+        const albumArtist = album.artists[z];
+        let artist = await artistRepository.getArtist({
+          id: albumArtist.id,
+        });
 
-      if (!artist) artist = await artistService.insertArtist(albumArtist.id);
+        if (!artist) artist = await artistService.insertArtist(albumArtist.id);
 
-      albumData.artists.push(artist._id);
+        albumData.artists.push(artist._id);
+      }
     }
 
     return await albumRepository.insertAlbum(albumData);
@@ -47,10 +49,27 @@ async function insertAlbum(albumId, album) {
 }
 
 async function insertAlbums(artistId) {
-  sleep(500);
-  let albums = (await spotifyApi.getArtistAlbums(artistId)).body.items;
+  await sleep(300);
+  let response = await spotifyApi.getArtistAlbums(artistId, {
+    include_groups: "album,single",
+    limit: 50,
+  });
+  let albums = response.body.items;
+  const totalPages = response.body.total / 50;
+
+  for (let i = 1; i <= totalPages; i++) {
+    const offset = i * 50;
+
+    response = await spotifyApi.getArtistAlbums(artistId, {
+      limit: 50,
+      offset,
+    });
+
+    albums = albums.concat(response.body.items);
+  }
 
   const ids = [];
+
   for (let i = 0; i < albums.length; i++) {
     const album = albums[i];
 
