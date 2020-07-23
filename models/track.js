@@ -18,8 +18,16 @@ const TrackSchema = new mongoose.Schema(
     is_playable: Boolean,
     href: String,
     uri: String,
-    samples: [{ type: mongoose.Schema.Types.ObjectId, ref: "Track" }],
-    sampledIn: [{ type: mongoose.Schema.Types.ObjectId, ref: "Track" }],
+    samples: [
+      {
+        id: { type: mongoose.Schema.Types.ObjectId, ref: "Track" },
+        sample_ms: Number,
+        type: {
+          type: String,
+          enum: ["sample", "sampledIn"],
+        },
+      },
+    ],
   },
   {
     timestamps: true,
