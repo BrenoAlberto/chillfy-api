@@ -12,10 +12,8 @@ const SESSION_SECRET = process.env.SESSION_SECRET;
 const app = express();
 
 db.connect(DB_HOST);
-require("./models/user");
-require("./models/track");
-require("./models/artist");
-require("./models/album");
+
+require("./models");
 
 const { passport } = require("./services/spotify");
 
@@ -32,15 +30,14 @@ app.get("/", function (req, res) {
   res.send({ user: req.user });
 });
 
-const authRoutes = require("./routes/auth");
-const artistRoutes = require("./routes/artist");
-const statsRoutes = require("./routes/stats");
-const playerRoutes = require("./routes/player");
+const baseApiUrl = "/api";
+const routes = require("./routes");
 
-app.use("/api", authRoutes);
-app.use("/api/artist", artistRoutes);
-app.use("/api/player", playerRoutes);
-app.use("/api/stats", statsRoutes);
+app.use(baseApiUrl, routes.auth);
+app.use(`${baseApiUrl}/artist`, routes.artist);
+app.use(`${baseApiUrl}/player`, routes.player);
+app.use(`${baseApiUrl}/search`, routes.search);
+app.use(`${baseApiUrl}/stats`, routes.stats);
 
 app.listen({ port }, () =>
   console.log(`Server running at http://localhost:${port}`)
