@@ -1,7 +1,8 @@
 const router = require("express").Router();
-const { spotifyApi, ensureAuthenticated } = require("../services/spotify");
+const { ensureAuthenticated, setSpotifyApi } = require("../services/spotify");
 
 router.get("/top/:type", ensureAuthenticated, async (req, res) => {
+  const spotifyApi = await setSpotifyApi(req.headers);
   const type = req.params.type.toLowerCase();
   const result = [];
 

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { spotifyApi, ensureAuthenticated } = require("../services/spotify");
+const { ensureAuthenticated, setSpotifyApi } = require("../services/spotify");
 
 // TODO player devices
 // TODO player currently playing
@@ -7,6 +7,7 @@ const { spotifyApi, ensureAuthenticated } = require("../services/spotify");
 // TODO player seek
 
 router.get("/", ensureAuthenticated, async (req, res) => {
+  const spotifyApi = await setSpotifyApi(req.headers);
   const player = (await spotifyApi.getMyCurrentPlaybackState()).body;
 
   return res.status(200).json(player);
@@ -14,6 +15,7 @@ router.get("/", ensureAuthenticated, async (req, res) => {
 
 router.get("/recently-played", ensureAuthenticated, async (req, res) => {
   try {
+    const spotifyApi = await setSpotifyApi(req.headers);
     const recentlyPlayedTracks = (await spotifyApi.getMyRecentlyPlayedTracks())
       .body.items;
 
@@ -28,6 +30,8 @@ router.get("/recently-played", ensureAuthenticated, async (req, res) => {
 });
 
 router.post("/volume", ensureAuthenticated, async (req, res) => {
+  const spotifyApi = await setSpotifyApi(req.headers);
+
   const { volumePerecent } = req.body;
   await spotifyApi.setVolume(volumePerecent);
 
@@ -35,6 +39,7 @@ router.post("/volume", ensureAuthenticated, async (req, res) => {
 });
 
 router.post("/skip/:type", ensureAuthenticated, async (req, res) => {
+  const spotifyApi = await setSpotifyApi(req.headers);
   const type = req.params.type.toLowerCase();
 
   if (type === "next") await spotifyApi.skipToNext();
@@ -44,6 +49,7 @@ router.post("/skip/:type", ensureAuthenticated, async (req, res) => {
 });
 
 router.put("/shuffle", ensureAuthenticated, async (req, res) => {
+  const spotifyApi = await setSpotifyApi(req.headers);
   const { state } = req.body;
   await spotifyApi.setShuffle({ state });
 
@@ -51,6 +57,7 @@ router.put("/shuffle", ensureAuthenticated, async (req, res) => {
 });
 
 router.put("/repeat", ensureAuthenticated, async (req, res) => {
+  const spotifyApi = await setSpotifyApi(req.headers);
   const { state } = req.body; // context, track, off
   await spotifyApi.setRepeat({ state });
 
@@ -58,12 +65,14 @@ router.put("/repeat", ensureAuthenticated, async (req, res) => {
 });
 
 router.put("/play", ensureAuthenticated, async (req, res) => {
+  const spotifyApi = await setSpotifyApi(req.headers);
   await spotifyApi.play();
 
   return res.status(200);
 });
 
 router.put("/pause", ensureAuthenticated, async (req, res) => {
+  const spotifyApi = await setSpotifyApi(req.headers);
   await spotifyApi.pause();
 
   return res.status(200);

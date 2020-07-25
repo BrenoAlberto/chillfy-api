@@ -1,61 +1,45 @@
 const SpotifyWebApi = require("spotify-web-api-node");
-const SpotifyStrategy = require("passport-spotify").Strategy;
-const passport = require("passport");
-// const userRepository = require("../repository/user");
+const moment = require("moment");
 require("dotenv").config();
 
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const SPOTIFY_CALLBACK_URI = process.env.SPOTIFY_CALLBACK_URI;
 
-passport.serializeUser(function (user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function (obj, done) {
-  done(null, obj);
-});
-
-const spotifyApi = new SpotifyWebApi();
-
-passport.use(
-  new SpotifyStrategy(
-    {
-      clientID: CLIENT_ID,
-      clientSecret: CLIENT_SECRET,
-      callbackURL: SPOTIFY_CALLBACK_URI,
-      // passReqToCallback: true,
-    },
-    function (accessToken, refreshToken, expires_in, profile, done) {
-      spotifyApi.setAccessToken(accessToken);
-
-      process.nextTick(async function () {
-        // let user = await userRepository.getUser({ spotifyId: profile.id });
-        // if (!user) {
-        //   newData = {
-        //     spotifyId: profile.id,
-        //     displayName: profile.displayName,
-        //     refreshToken,
-        //     profilePic: profile.photos[0],
-        //   };
-        //   user = await userRepository.createUser(newData);
-        // }
-
-        return done(null, profile);
-      });
-    }
-  )
-);
-
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
+  if (
+    req.headers.access_token &&
+    req.headers.refresh_token &&
+    req.headers.refresh_at
+  ) {
     return next();
   }
   res.redirect("/api/auth");
 }
 
+//TODO is this the best way ?
+async function setSpotifyApi({ access_token, refresh_token, refresh_at }) {
+  const timeToRefresh = moment(moment.now()).isSameOrAfter(
+    moment(new Date(refresh_at))
+  );
+
+  const spotifyApi = new SpotifyWebApi({
+    clientId: SPOTIFY_CLIENT_ID,
+    clientSecret: SPOTIFY_CLIENT_SECRET,
+    redirectUri: SPOTIFY_CALLBACK_URI,
+  });
+  spotifyApi.setAccessToken(access_token);
+  spotifyApi.setRefreshToken(refresh_token);
+
+  if (timeToRefresh)
+    spotifyApi.setAccessToken(
+      (await spotifyApi.refreshAccessToken()).body.access_token
+    );
+
+  return spotifyApi;
+}
+
 module.exports = {
-  passport,
-  spotifyApi,
   ensureAuthenticated,
+  setSpotifyApi,
 };

@@ -1,10 +1,9 @@
 const artistRepository = require("../repository/artist");
-const { spotifyApi } = require("./spotify");
 const { sleep } = require("../utils/util");
 
 //TODO refactor this function so it makes less request to spotify
 
-async function insertArtist(artistId) {
+async function insertArtist(spotifyApi, artistId) {
   try {
     let artist = await artistRepository.getArtist({ id: artistId });
 

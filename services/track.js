@@ -3,12 +3,11 @@ const albumRepository = require("../repository/album");
 const trackRepository = require("../repository/track");
 const artistService = require("./artist");
 const albumService = require("./album");
-const { spotifyApi } = require("./spotify");
 const { sleep } = require("../utils/util");
 
 //TODO refactor this function so it makes less request to spotify
 
-async function insertTrack(trackId, track) {
+async function insertTrack(spotifyApi, trackId, track) {
   if (!track) {
     await sleep(300);
     track = (await spotifyApi.getTrack(trackId)).body;
@@ -33,7 +32,8 @@ async function insertTrack(trackId, track) {
         id: trackArtist.id,
       });
 
-      if (!artist) artist = await artistService.insertArtist(trackArtist.id);
+      if (!artist)
+        artist = await artistService.insertArtist(spotifyApi, trackArtist.id);
 
       trackData.artists.push(artist._id);
     }
@@ -42,10 +42,10 @@ async function insertTrack(trackId, track) {
   return await trackRepository.insertTrack(trackData);
 }
 
-async function insertTracks(albumId) {
+async function insertTracks(spotifyApi, albumId) {
   let album = await albumRepository.getAlbum({ id: albumId });
 
-  if (!album) album = await albumService.insertAlbum(albumId);
+  if (!album) album = await albumService.insertAlbum(spotifyApi, albumId);
 
   const registeredTracks = await trackRepository.getTracks({
     album: album._id,
@@ -71,7 +71,7 @@ async function insertTracks(albumId) {
     for (let i = 0; i < tracks.length; i++) {
       let track = tracks[i];
 
-      track = await insertTrack(track.id, track);
+      track = await insertTrack(spotifyApi, track.id, track);
 
       album.tracks.push(track._id);
     }
