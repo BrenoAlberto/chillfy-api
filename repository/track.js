@@ -4,7 +4,7 @@ async function insertTrack(newData) {
   try {
     track = new Track(newData);
     await track.save();
-    track.populate.populate("album").populate("artists").populate("samples.id");
+    track.populate("album").populate("artists").populate("samples.id");
     return track;
   } catch (e) {
     console.log(e);

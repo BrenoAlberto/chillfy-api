@@ -29,6 +29,7 @@ const TrackSchema = new mongoose.Schema({
       },
     },
   ],
+  ws_crawled: Boolean,
 });
 
 const Track = mongoose.model("Track", TrackSchema);

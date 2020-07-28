@@ -11,6 +11,15 @@ async function insertItem(data) {
   }
 }
 
+async function updateItem(id, newData) {
+  try {
+    const updateQuery = { $set: newData };
+    return await Queue.findOneAndUpdate({ id }, updateQuery, {
+      new: true,
+    }).exec();
+  } catch (e) {}
+}
+
 async function getQueue(conditions = {}, sort = { _id: -1 }) {
   try {
     return await Queue.find(conditions).sort(sort).exec();
@@ -22,4 +31,5 @@ async function getQueue(conditions = {}, sort = { _id: -1 }) {
 module.exports = {
   insertItem,
   getQueue,
+  updateItem,
 };

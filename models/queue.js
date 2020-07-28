@@ -16,7 +16,8 @@ const queueSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["completed", "pending"],
+      enum: ["completed", "pending", "error"],
+      default: "pending",
       required: true,
     },
   },

@@ -30,6 +30,8 @@ app.use(`${baseApiUrl}/track`, routes.track);
 app.use(`${baseApiUrl}/search`, routes.search);
 app.use(`${baseApiUrl}/stats`, routes.stats);
 
+require("./tasks");
+
 app.listen({ port }, () =>
   console.log(`Server running at http://localhost:${port}`)
 );
