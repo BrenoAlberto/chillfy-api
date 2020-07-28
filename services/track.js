@@ -3,43 +3,51 @@ const albumRepository = require("../repository/album");
 const trackRepository = require("../repository/track");
 const artistService = require("./artist");
 const albumService = require("./album");
+const searchService = require("./search");
 const { sleep } = require("../utils/util");
 
 //TODO refactor this function so it makes less request to spotify
 
 async function insertTrack(spotifyApi, trackId, track) {
-  if (!track) {
-    await sleep(300);
-    track = (await spotifyApi.getTrack(trackId)).body;
-  }
+  const alreadyRegisteredTrack = await trackRepository.getTrack({
+    id: trackId,
+  });
 
-  const trackData = {
-    id: track.id,
-    name: track.name,
-    track_number: track.track_number,
-    duration_ms: track.duration_ms,
-    explicit: track.explicit,
-    is_playable: track.is_playable,
-    href: track.href,
-    uri: track.uri,
-    artists: [],
-  };
-
-  if (track.artists) {
-    for (let z = 0; z < track.artists.length; z++) {
-      const trackArtist = track.artists[z];
-      let artist = await artistRepository.getArtist({
-        id: trackArtist.id,
-      });
-
-      if (!artist)
-        artist = await artistService.insertArtist(spotifyApi, trackArtist.id);
-
-      trackData.artists.push(artist._id);
+  if (!alreadyRegisteredTrack) {
+    if (!track) {
+      await sleep(300);
+      track = (await spotifyApi.getTrack(trackId)).body;
     }
-  }
 
-  return await trackRepository.insertTrack(trackData);
+    const trackData = {
+      id: track.id,
+      name: track.name,
+      track_number: track.track_number,
+      duration_ms: track.duration_ms,
+      explicit: track.explicit,
+      is_playable: track.is_playable,
+      href: track.href,
+      uri: track.uri,
+      artists: [],
+    };
+
+    if (track.artists) {
+      for (let z = 0; z < track.artists.length; z++) {
+        const trackArtist = track.artists[z];
+        let artist = await artistRepository.getArtist({
+          id: trackArtist.id,
+        });
+
+        if (!artist)
+          artist = await artistService.insertArtist(spotifyApi, trackArtist.id);
+
+        trackData.artists.push(artist._id);
+      }
+    }
+
+    return await trackRepository.insertTrack(trackData);
+  }
+  return alreadyRegisteredTrack;
 }
 
 async function insertTracks(spotifyApi, albumId) {
@@ -79,7 +87,70 @@ async function insertTracks(spotifyApi, albumId) {
   }
 }
 
+const insertSample = async (
+  spotifyApi,
+  trackId,
+  sampledId,
+  sampleType,
+  trackData,
+  sampleData
+) => {
+  let track;
+  let sample;
+
+  if (trackId) {
+    track = await trackRepository.getTrack({ id: trackId });
+    if (!track) track = await trackService.insertTrack(spotifyApi, id);
+  } else if (trackData) {
+    const query = `${trackData.artist} ${trackData.track}`;
+    const searchResult = (
+      await searchService.search(spotifyApi, query, "track")
+    ).tracks;
+    const searchItems = searchResult.items;
+
+    if (searchItems) {
+      //TODO more result checks
+      track = await trackService.insertTrack({ id: searchItems[0].id });
+    }
+  }
+
+  if (sampledId) {
+    sample = await trackRepository.getTrack({ id: sampleId });
+    if (!sample) sample = await trackService.insertTrack(spotifyApi, sampleId);
+  } else if (sampleData) {
+    const query = `${sampleData.artist} ${sampleData.track}`;
+    const searchResult = (
+      await searchService.search(spotifyApi, query, "track")
+    ).tracks;
+    const searchItems = searchResult.items;
+
+    if (searchItems) {
+      //TODO more result checks
+      sample = await trackService.insertTrack({ id: searchItems[0].id });
+    }
+  }
+
+  const newSample = { id: sample._id, type: sampleType };
+
+  if (track.samples) {
+    const alreadyRegistered = false;
+    track.samples.forEach((registeredSample) => {
+      if (registeredSample.id === newSample.id) alreadyRegistered = true;
+    });
+    if (!alreadyRegistered) {
+      track.samples.push(newSample);
+    }
+  } else {
+    track.samples = [newSample];
+  }
+
+  return await trackRepository.updateTrack(id, {
+    samples: track.samples,
+  });
+};
+
 module.exports = {
   insertTrack,
   insertTracks,
+  insertSample,
 };

@@ -4,6 +4,7 @@ const TrackSchema = new mongoose.Schema({
   id: {
     type: String,
     required: true,
+    unique: true,
   },
   album: { type: mongoose.Schema.Types.ObjectId, ref: "Album" },
   artists: [{ type: mongoose.Schema.Types.ObjectId, ref: "Artist" }],
@@ -24,7 +25,7 @@ const TrackSchema = new mongoose.Schema({
       sample_ms: Number,
       type: {
         type: String,
-        enum: ["sample", "sampledIn"],
+        enum: ["sample", "sampledIn", "coveredIn"],
       },
     },
   ],

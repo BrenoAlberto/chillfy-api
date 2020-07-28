@@ -2,15 +2,9 @@ const Track = require("mongoose").model("Track");
 
 async function insertTrack(newData) {
   try {
-    let track = await getTrack({ id: newData.id });
-    if (!track) {
-      track = new Track(newData);
-      await track.save();
-      track.populate
-        .populate("album")
-        .populate("artists")
-        .populate("samples.id");
-    }
+    track = new Track(newData);
+    await track.save();
+    track.populate.populate("album").populate("artists").populate("samples.id");
     return track;
   } catch (e) {
     console.log(e);

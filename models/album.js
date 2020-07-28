@@ -4,6 +4,7 @@ const AlbumSchema = new mongoose.Schema({
   id: {
     type: String,
     required: true,
+    unique: true,
   },
   album_type: {
     type: String,

@@ -4,6 +4,7 @@ const ArtistSchema = new mongoose.Schema({
   id: {
     type: String,
     required: true,
+    unique: true,
   },
   images: Array,
   genres: [String],
