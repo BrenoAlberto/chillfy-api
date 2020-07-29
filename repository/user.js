@@ -11,6 +11,19 @@ async function createUser(newData) {
   }
 }
 
+async function upsertUser(id, newData) {
+  try {
+    const user = await getUser({ id });
+    if (user) {
+      const updateQuery = { $set: newData };
+      return await User.findOneAndUpdate({ id }, updateQuery, {
+        new: true,
+      }).exec();
+    }
+    return await createUser(newData);
+  } catch (e) {}
+}
+
 async function getUser(conditions, optionalFields = {}) {
   try {
     const user = await User.findOne(conditions, optionalFields).exec();
@@ -23,5 +36,6 @@ async function getUser(conditions, optionalFields = {}) {
 
 module.exports = {
   createUser,
+  upsertUser,
   getUser,
 };

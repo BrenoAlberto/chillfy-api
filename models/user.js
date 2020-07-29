@@ -2,21 +2,15 @@ const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
   {
-    refreshToken: {
-      type: String,
-      required: true,
-    },
-    profilePic: {
-      type: mongoose.SchemaTypes.Mixed,
-    },
-    displayName: {
-      type: String,
-      required: true,
-    },
-    spotifyId: {
-      type: String,
-      required: true,
-    },
+    id: String,
+    accessToken: String,
+    refreshToken: String,
+    refreshAt: String,
+    profilePic: String,
+    displayName: String,
+    country: String,
+    email: String,
+    contributionPoints: Number,
   },
   {
     timestamps: true,
