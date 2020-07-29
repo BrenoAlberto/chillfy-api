@@ -129,11 +129,11 @@ const insertSample = async (
       sample = await insertTrack(spotifyApi, searchItems[0].id);
   }
 
-  if (sample) {
+  if (track && sample) {
     const newSample = { id: sample._id, type: sampleType };
 
     if (track.samples) {
-      const alreadyRegistered = false;
+      let alreadyRegistered = false;
       track.samples.forEach((registeredSample) => {
         if (registeredSample.id === newSample.id) alreadyRegistered = true;
       });
