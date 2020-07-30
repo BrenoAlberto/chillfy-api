@@ -4,9 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --coverage --runInBand ./test",
     "debug": "nodemon --inspect ./index.js",
     "sonar": "node sonar-project.js"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +27,9 @@
     "spotify-web-api-node": "^4.0.0"
   },
   "devDependencies": {
+    "jest": "^26.1.0",
+    "jest-sonar-reporter": "^2.0.0",
+    "mongodb-memory-server": "^6.6.3",
     "sonarqube-scanner": "^2.7.0"
   }
 }

@@ -6,7 +6,10 @@ sonarqubeScanner(
     serverUrl: process.env.SONAR_SERVER_URL,
     options: {
       "sonar.sources": ".",
-      "sonar.exclusions": "node_modules/**",
+      "sonar.exclusions": "tests/**, node_modules/**, coverage/**",
+      "sonar.test.inclusions": "test/**",
+      "sonar.tests": "./tests",
+      "sonar.coverage.exclusions": "test/**, models/**",
     },
   },
   () => {}
