@@ -30,7 +30,7 @@ describe("Queue Repository ", () => {
     });
   });
   describe("Get queue", () => {
-    it("When complete item provided, insert successfully ", async () => {
+    it("When asking for a queue, ensure ordered results", async () => {
       const item1 = Object.assign({}, queueItemComplete);
       const item2 = Object.assign({}, queueItemComplete);
       const item3 = Object.assign({}, queueItemComplete);
