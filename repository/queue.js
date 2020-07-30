@@ -4,17 +4,16 @@ const Queue = require("mongoose").model("Queue");
 async function insertItem(data) {
   try {
     const newItem = new Queue(data);
-    await newItem.save();
-    return newItem;
+    return await newItem.save();
   } catch (e) {
     // throw queueErr.ERROR_INSERTING_ITEM;
   }
 }
 
-async function updateItem(id, newData) {
+async function updateItem(_id, newData) {
   try {
     const updateQuery = { $set: newData };
-    return await Queue.findOneAndUpdate({ id }, updateQuery, {
+    return await Queue.findOneAndUpdate({ _id }, updateQuery, {
       new: true,
     }).exec();
   } catch (e) {}
