@@ -95,59 +95,57 @@ const insertSample = async (
   trackData,
   sampleData
 ) => {
-  let track;
-  let sample;
-
-  if (trackId) {
-    track = await trackRepository.getTrack({ id: trackId });
-    if (!track) track = await insertTrack(spotifyApi, id);
-  } else if (trackData) {
-    const query = `${trackData.artist} ${trackData.track}`;
-    const searchResult = (
-      await searchService.search(spotifyApi, query, ["track"])
-    ).tracks;
-    const searchItems = searchResult.items;
-
-    if (searchItems) {
-      //TODO more result checks
-      track = await insertTrack(spotifyApi, searchItems[0].id);
-    }
-  }
-
-  if (sampledId) {
-    sample = await trackRepository.getTrack({ id: sampleId });
-    if (!sample) sample = await insertTrack(spotifyApi, sampleId);
-  } else if (sampleData) {
-    const query = `${sampleData.artist} ${sampleData.track}`;
-    const searchResult = (
-      await searchService.search(spotifyApi, query, ["track"])
-    ).tracks;
-    const searchItems = searchResult.items;
-
-    //TODO more result checks
-    if (searchItems.length && searchItems[0].id)
-      sample = await insertTrack(spotifyApi, searchItems[0].id);
-  }
+  let track = await getSertTrack(spotifyApi, trackId, trackData);
+  const sample = await getSertTrack(spotifyApi, sampledId, sampleData);
 
   if (track && sample) {
-    const newSample = { id: sample._id, type: sampleType };
-
-    if (track.samples) {
-      let alreadyRegistered = false;
-      track.samples.forEach((registeredSample) => {
-        if (registeredSample.id === newSample.id) alreadyRegistered = true;
-      });
-      if (!alreadyRegistered) {
-        track.samples.push(newSample);
-      }
-    } else {
-      track.samples = [newSample];
-    }
+    track = await pushSampleToTrack(spotifyApi, track, sample, sampleType);
 
     return await trackRepository.updateTrack(trackId, {
       samples: track.samples,
     });
   }
+};
+
+const getSertTrack = async (spotifyApi, id, trackData) => {
+  let track;
+  if (id) {
+    track = await trackRepository.getTrack({ id });
+    if (!track) track = await insertTrack(spotifyApi, id);
+  } else {
+    const searchResultItems = await searchTrack(spotifyApi, trackData);
+
+    //TODO more result checks
+    if (searchResultItems.length && searchResultItems[0].id)
+      track = await insertTrack(spotifyApi, searchResultItems[0].id);
+  }
+  return track;
+};
+
+const searchTrack = async (spotifyApi, { artist, track }) => {
+  const query = `${artist} ${track}`;
+  const searchResult = (
+    await searchService.search(spotifyApi, query, ["track"])
+  ).tracks;
+  return searchResult.items;
+};
+
+const pushSampleToTrack = async (spotifyApi, track, sample, sampleType) => {
+  const newSample = { id: sample._id, type: sampleType };
+
+  if (track.samples) {
+    let alreadyRegistered = false;
+    track.samples.forEach((registeredSample) => {
+      if (registeredSample.id === newSample.id) alreadyRegistered = true;
+    });
+    if (!alreadyRegistered) {
+      track.samples.push(newSample);
+    }
+  } else {
+    track.samples = [newSample];
+  }
+
+  return track;
 };
 
 module.exports = {
