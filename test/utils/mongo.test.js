@@ -28,8 +28,8 @@ describe("Mongo utils ", () => {
 
       pushReferenceToDocument(track, artist._id, "artists");
 
-      expect(track).toHaveProperty("_id");
-      expect(track.name).toEqual(mockTrack.name);
+      expect(track.artists.length).toEqual(1);
+      expect(track.artists[0]).toEqual(artist._id);
     });
     it("When insert a artist reference to a document with artists reference, insert reference successfully and return document", async () => {
       const mockTrack = spotifyApiMock.tracksData[0];
