@@ -8,7 +8,7 @@ router.get("/:id", ensureAuthenticated, async (req, res) => {
   const id = req.params.id;
   try {
     const spotifyApi = await setSpotifyApi(req.headers);
-    const artist = await artistService.insertArtist(spotifyApi, id);
+    const artist = await artistService.getsertArtist(spotifyApi, id);
 
     if (artist) {
       const albumsIds = await albumService.insertAlbums(spotifyApi, id);

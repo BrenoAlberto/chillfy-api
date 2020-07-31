@@ -35,7 +35,10 @@ async function insertAlbum(spotifyApi, albumId, album) {
         });
 
         if (!artist)
-          artist = await artistService.insertArtist(spotifyApi, albumArtist.id);
+          artist = await artistService.getsertArtist(
+            spotifyApi,
+            albumArtist.id
+          );
 
         albumData.artists.push(artist._id);
       }
