@@ -2,8 +2,6 @@ const albumRepository = require("../repository/album");
 const artistService = require("./artist");
 const artistRepository = require("../repository/artist");
 
-//TODO refactor this function so it makes less request to spotify
-
 async function insertAlbum(spotifyApi, albumId, album) {
   const registeredAlbum = await albumRepository.getAlbum({
     spotifyId: albumId,
@@ -80,7 +78,7 @@ async function insertAlbums(spotifyApi, artistId) {
   return ids;
 }
 
-const getSertAlbum = async (spotifyApi, id) => {
+const getsertAlbum = async (spotifyApi, id) => {
   let album = await albumRepository.getAlbum({ spotifyId: id });
   if (!album) album = await insertAlbum(spotifyApi, id);
   return album;
@@ -89,5 +87,5 @@ const getSertAlbum = async (spotifyApi, id) => {
 module.exports = {
   insertAlbum,
   insertAlbums,
-  getSertAlbum,
+  getsertAlbum,
 };

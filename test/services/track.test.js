@@ -13,7 +13,7 @@ describe("Track Service ", () => {
   describe("Insert track", () => {
     it("When provided track data, insert successfully and get track", async () => {
       const mockTrack = spotifyApiMock.tracksData[0];
-      const track = await trackService.getSertTrack(
+      const track = await trackService.getsertTrack(
         spotifyApiMock,
         mockTrack.id
       );
@@ -26,7 +26,7 @@ describe("Track Service ", () => {
   describe("Insert sample", () => {
     it("When provided sample data, insert successfully and get track", async () => {
       const mockTrackId = spotifyApiMock.trackIds[0];
-      let track = await trackService.getSertTrack(spotifyApiMock, mockTrackId);
+      let track = await trackService.getsertTrack(spotifyApiMock, mockTrackId);
 
       const mockSampleId = spotifyApiMock.trackIds[1];
       track = await trackService.insertSample(
@@ -49,7 +49,7 @@ describe("Track Service ", () => {
   describe("Insert album tracks", () => {
     it("When provided album data, insert successfully his tracks and returns", async () => {
       const mockAlbumId = spotifyApiMock.albumIds[0];
-      const tracks = await trackService.getSertAlbumTracks(
+      const tracks = await trackService.getsertAlbumTracks(
         spotifyApiMock,
         mockAlbumId
       );

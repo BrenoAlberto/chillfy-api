@@ -16,7 +16,7 @@ router.get("/:id", ensureAuthenticated, async (req, res) => {
       for (let i = 0; i < albumsIds.length; i++) {
         const albumId = albumsIds[i];
 
-        await trackService.getSertAlbumTracks(spotifyApi, albumId);
+        await trackService.getsertAlbumTracks(spotifyApi, albumId);
       }
     }
 

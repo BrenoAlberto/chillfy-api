@@ -8,7 +8,7 @@ router.get("/:id", ensureAuthenticated, async (req, res) => {
     const spotifyApi = await setSpotifyApi(req.headers);
     const id = req.params.id;
 
-    const track = await trackService.getSertTrack(spotifyApi, id);
+    const track = await trackService.getsertTrack(spotifyApi, id);
 
     if (track && !track.ws_crawled && track.artist.length) {
       await queueService.insertGetSamples(

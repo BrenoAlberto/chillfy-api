@@ -15,13 +15,13 @@ describe("Mongo utils ", () => {
   describe("Push reference to document", () => {
     it("When insert a artist reference to a document without artists reference, insert reference successfully and return document", async () => {
       const mockTrack = spotifyApiMock.tracksData[0];
-      const track = await trackService.getSertTrack(
+      const track = await trackService.getsertTrack(
         spotifyApiMock,
         mockTrack.id
       );
 
       const mockArtist = spotifyApiMock.artistsData[1];
-      const artist = await artistService.getSertArtist(
+      const artist = await artistService.getsertArtist(
         spotifyApiMock,
         mockArtist.id
       );
@@ -33,18 +33,18 @@ describe("Mongo utils ", () => {
     });
     it("When insert a artist reference to a document with artists reference, insert reference successfully and return document", async () => {
       const mockTrack = spotifyApiMock.tracksData[0];
-      const track = await trackService.getSertTrack(
+      const track = await trackService.getsertTrack(
         spotifyApiMock,
         mockTrack.id
       );
 
       const mockArtist1 = spotifyApiMock.artistsData[0];
       const mockArtist2 = spotifyApiMock.artistsData[1];
-      const artist1 = await artistService.getSertArtist(
+      const artist1 = await artistService.getsertArtist(
         spotifyApiMock,
         mockArtist1.id
       );
-      const artist2 = await artistService.getSertArtist(
+      const artist2 = await artistService.getsertArtist(
         spotifyApiMock,
         mockArtist2.id
       );

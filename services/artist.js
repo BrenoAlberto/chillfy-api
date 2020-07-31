@@ -28,7 +28,7 @@ async function insertArtist(spotifyApi, artistId) {
   }
 }
 
-async function getSertArtist(spotifyApi, artistId) {
+async function getsertArtist(spotifyApi, artistId) {
   let artist = await artistRepository.getArtist({ spotifyId: artistId });
   if (!artist) artist = await insertArtist(spotifyApi, artistId);
   return artist;
@@ -36,5 +36,5 @@ async function getSertArtist(spotifyApi, artistId) {
 
 module.exports = {
   insertArtist,
-  getSertArtist,
+  getsertArtist,
 };

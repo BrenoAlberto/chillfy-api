@@ -14,8 +14,8 @@ async function insertSample(
   trackData,
   sampleData
 ) {
-  let track = await getSertTrack(spotifyApi, trackId, trackData);
-  const sample = await getSertTrack(spotifyApi, sampledId, sampleData);
+  let track = await getsertTrack(spotifyApi, trackId, trackData);
+  const sample = await getsertTrack(spotifyApi, sampledId, sampleData);
 
   if (track && sample) {
     track = _pushSampleToTrack(track, sample, sampleType);
@@ -26,7 +26,7 @@ async function insertSample(
   }
 }
 
-async function getSertTrack(spotifyApi, id, trackData) {
+async function getsertTrack(spotifyApi, id, trackData) {
   let track;
   if (id) {
     track = await trackRepository.getTrack({ spotifyId: id });
@@ -49,8 +49,8 @@ async function searchTrack(spotifyApi, { artist, track }) {
   return searchResult.items;
 }
 
-async function getSertAlbumTracks(spotifyApi, albumId) {
-  let album = await albumService.getSertAlbum(spotifyApi, albumId);
+async function getsertAlbumTracks(spotifyApi, albumId) {
+  let album = await albumService.getsertAlbum(spotifyApi, albumId);
 
   if (!album.allTracksSaved) {
     await spotifyApi.sleep(300);
@@ -81,14 +81,14 @@ async function _insertTrack(spotifyApi, trackId, track) {
   }
 
   const newTrackData = _setTrackData(track);
-  const album = await albumService.getSertAlbum(spotifyApi, track.album);
+  const album = await albumService.getsertAlbum(spotifyApi, track.album);
   newTrackData.album = album._id;
 
   for (let i = 0; i < track.artists.length; i++) {
     const trackArtist = track.artists[i];
     const trackArtistId = trackArtist.id ? trackArtist.id : trackArtist;
 
-    const artist = await artistService.getSertArtist(spotifyApi, trackArtistId);
+    const artist = await artistService.getsertArtist(spotifyApi, trackArtistId);
 
     pushReferenceToDocument(newTrackData, artist._id, "artists");
   }
@@ -156,8 +156,8 @@ function _pushSampleToTrack(track, sample, sampleType) {
 }
 
 module.exports = {
-  getSertTrack,
-  getSertAlbumTracks,
+  getsertTrack,
+  getsertAlbumTracks,
   insertSample,
   searchTrack,
 };
