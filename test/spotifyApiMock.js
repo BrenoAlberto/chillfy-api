@@ -152,6 +152,39 @@ module.exports.artistsData = [
     name: "Lil Uzi Vert",
     uri: "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
   },
+  {
+    genres: [
+      "atl trap",
+      "rap",
+      "southern hip hop",
+      "trap",
+      "underground hip hop",
+      "vapor trap",
+    ],
+    href: "https://api.spotify.com/v1/artists/5yPzzu25VzEk8qrGTLIrE1",
+    id: "5yPzzu25VzEk8qrGTLIrE1",
+    images: [
+      {
+        height: 640,
+        url: "https://i.scdn.co/image/ae8ef6c685aaf8c9c2749de0062488d6f9df9e69",
+        width: 640,
+      },
+      {
+        height: 320,
+        url: "https://i.scdn.co/image/98bbdfc6f2613f677f7df45a3d53262185064b32",
+        width: 320,
+      },
+      {
+        height: 160,
+        url: "https://i.scdn.co/image/fa31fc33533b30b427e973bb6a0b5e6898196310",
+        width: 160,
+      },
+    ],
+    name: "Young Nudy",
+    popularity: 69,
+    type: "artist",
+    uri: "spotify:artist:5yPzzu25VzEk8qrGTLIrE1",
+  },
 ];
 
 module.exports.trackIds = ["0uxSUdBrJy9Un0EYoBowng"];
