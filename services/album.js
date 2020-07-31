@@ -1,21 +1,22 @@
 const albumRepository = require("../repository/album");
 const artistService = require("./artist");
 const artistRepository = require("../repository/artist");
-const { sleep } = require("../utils/util");
 
 //TODO refactor this function so it makes less request to spotify
 
 async function insertAlbum(spotifyApi, albumId, album) {
-  const registeredAlbum = await albumRepository.getAlbum({ id: albumId });
+  const registeredAlbum = await albumRepository.getAlbum({
+    spotifyId: albumId,
+  });
 
   if (!registeredAlbum) {
     if (!album) {
-      await sleep(300);
+      await spotifyApi.sleep(300);
       album = await (await spotifyApi.getAlbum(albumId)).body;
     }
 
     const albumData = {
-      id: album.id,
+      spotifyId: album.id,
       album_type: album.album_type,
       artists: [],
       // genres: album.
@@ -32,7 +33,7 @@ async function insertAlbum(spotifyApi, albumId, album) {
       for (let z = 0; z < album.artists.length; z++) {
         const albumArtist = album.artists[z];
         let artist = await artistRepository.getArtist({
-          id: albumArtist.id,
+          spotifyId: albumArtist.id,
         });
 
         if (!artist)
@@ -49,7 +50,7 @@ async function insertAlbum(spotifyApi, albumId, album) {
 }
 
 async function insertAlbums(spotifyApi, artistId) {
-  await sleep(300);
+  await spotifyApi.sleep(300);
   let response = await spotifyApi.getArtistAlbums(artistId, {
     include_groups: "album,single",
     limit: 50,
@@ -79,7 +80,14 @@ async function insertAlbums(spotifyApi, artistId) {
   return ids;
 }
 
+const getSertAlbum = async (spotifyApi, id) => {
+  let album = await albumRepository.getAlbum({ spotifyId: id });
+  if (!album) album = await insertAlbum(spotifyApi, id);
+  return album;
+};
+
 module.exports = {
   insertAlbum,
   insertAlbums,
+  getSertAlbum,
 };

@@ -1,5 +1,3 @@
-const mongoose = require("mongoose");
-
 const dbHandler = require("../dbHandler");
 dbHandler.importModels();
 const queueRepository = require("../../repository/queue");

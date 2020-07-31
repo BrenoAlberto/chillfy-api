@@ -1,3 +1,4 @@
+const { structuredClone } = require("../utils/util");
 const available_markets = [
   "AD",
   "AE",
@@ -93,41 +94,69 @@ const available_markets = [
   "ZA",
 ];
 
-module.exports.getTrack = (id) => {
-  const track = this.tracksData.find((trackData) => trackData.id === id);
+const search = () => {
+  return {
+    body: {
+      tracks: {
+        items: [tracksData[0]],
+      },
+    },
+  };
+};
+
+const getTrack = (id) => {
+  const track = structuredClone(
+    tracksData.find((trackData) => trackData.id === id)
+  );
+  populateArtists(track);
+
   return {
     body: track,
   };
 };
 
-module.exports.getArtist = (id) => {
-  const artist = this.artistsData.find((artistData) => artistData.id === id);
+const populateArtists = (document) => {
+  for (let i = 0; i < document.artists.length; i++) {
+    document.artists[i] = artistsData.find(
+      (artistData) => artistData.id === document.artists[i]
+    );
+  }
+};
+
+const getArtist = (id) => {
+  const artist = artistsData.find((artistData) => artistData.id === id);
   return {
     body: artist,
   };
 };
 
-module.exports.getAlbum = (id) => {
-  const album = this.albumsData.find((albumData) => albumData.id === id);
+const getAlbum = (id) => {
+  const album = albumsData.find((albumData) => albumData.id === id);
   return {
     body: album,
   };
 };
 
-module.exports.getAlbumTracks = (id, options) => {
-  const tracks = this.tracksData.find((trackData) => trackData.album.id === id);
+const getAlbumTracks = (id, options) => {
+  const tracks = tracksData.filter((trackData) => trackData.album === id);
 
   return {
     body: {
       total: tracks.length,
-      tracks,
+      items: tracks,
     },
   };
 };
 
-module.exports.artistIds = ["4O15NlyKLIASxsJ0PrXPfz"];
+const artistIds = [
+  "4O15NlyKLIASxsJ0PrXPfz",
+  "5yPzzu25VzEk8qrGTLIrE1",
+  "1XLWox9w1Yvbodui0SRhUQ",
+];
+const trackIds = ["0uxSUdBrJy9Un0EYoBowng", "3EWaR09H3TkRgaLTIheYFr"];
+const albumIds = ["0zicd2mBV8HTzSubByj4vP"];
 
-module.exports.artistsData = [
+const artistsData = [
   {
     genres: ["melodic rap", "philly rap", "rap"],
     href: "https://api.spotify.com/v1/artists/4O15NlyKLIASxsJ0PrXPfz",
@@ -185,93 +214,36 @@ module.exports.artistsData = [
     type: "artist",
     uri: "spotify:artist:5yPzzu25VzEk8qrGTLIrE1",
   },
-];
-
-module.exports.trackIds = ["0uxSUdBrJy9Un0EYoBowng"];
-
-module.exports.tracksData = [
   {
-    album: {
-      album_type: "album",
-      artists: [
-        {
-          external_urls: {
-            spotify: "https://open.spotify.com/artist/4O15NlyKLIASxsJ0PrXPfz",
-          },
-          href: "https://api.spotify.com/v1/artists/4O15NlyKLIASxsJ0PrXPfz",
-          id: "4O15NlyKLIASxsJ0PrXPfz",
-          name: "Lil Uzi Vert",
-          type: "artist",
-          uri: "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
-        },
-      ],
-      available_markets: available_markets,
-      href: "https://api.spotify.com/v1/albums/0zicd2mBV8HTzSubByj4vP",
-      id: "0zicd2mBV8HTzSubByj4vP",
-      images: [
-        {
-          height: 640,
-          url:
-            "https://i.scdn.co/image/ab67616d0000b2730d5a84e4e47399d2726c330c",
-          width: 640,
-        },
-        {
-          height: 300,
-          url:
-            "https://i.scdn.co/image/ab67616d00001e020d5a84e4e47399d2726c330c",
-          width: 300,
-        },
-        {
-          height: 64,
-          url:
-            "https://i.scdn.co/image/ab67616d000048510d5a84e4e47399d2726c330c",
-          width: 64,
-        },
-      ],
-      name: "Luv Is Rage 2 (Deluxe)",
-      release_date: "2017-11-17",
-      release_date_precision: "day",
-      total_tracks: 20,
-      type: "album",
-      uri: "spotify:album:0zicd2mBV8HTzSubByj4vP",
-    },
-    artists: [
+    genres: [],
+    href: "https://api.spotify.com/v1/artists/1XLWox9w1Yvbodui0SRhUQ",
+    id: "1XLWox9w1Yvbodui0SRhUQ",
+    images: [
       {
-        href: "https://api.spotify.com/v1/artists/4O15NlyKLIASxsJ0PrXPfz",
-        id: "4O15NlyKLIASxsJ0PrXPfz",
-        name: "Lil Uzi Vert",
-        type: "artist",
-        uri: "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
+        height: 640,
+        url: "https://i.scdn.co/image/8dcf6ad6cb29257dc3e7c6c4cf1c4d3953413359",
+        width: 640,
+      },
+      {
+        height: 320,
+        url: "https://i.scdn.co/image/16500716396c1994ec8b32b3e5e07ce143f75baf",
+        width: 320,
+      },
+      {
+        height: 160,
+        url: "https://i.scdn.co/image/9b237c4d7b9ab171e1c6851b1f34f9b82fb17b03",
+        width: 160,
       },
     ],
-    available_markets: available_markets,
-    disc_number: 1,
-    duration_ms: 220586,
-    explicit: true,
-    href: "https://api.spotify.com/v1/tracks/0uxSUdBrJy9Un0EYoBowng",
-    id: "0uxSUdBrJy9Un0EYoBowng",
-    is_local: false,
-    name: "20 Min",
-    track_number: 20,
-    uri: "spotify:track:0uxSUdBrJy9Un0EYoBowng",
+    name: "StaySolidRocky",
+    uri: "spotify:artist:1XLWox9w1Yvbodui0SRhUQ",
   },
 ];
 
-module.exports.albumsData = [
+const albumsData = [
   {
     album_type: "album",
-    artists: [
-      {
-        external_urls: {
-          spotify: "https://open.spotify.com/artist/4O15NlyKLIASxsJ0PrXPfz",
-        },
-        href: "https://api.spotify.com/v1/artists/4O15NlyKLIASxsJ0PrXPfz",
-        id: "4O15NlyKLIASxsJ0PrXPfz",
-        name: "Lil Uzi Vert",
-        type: "artist",
-        uri: "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
-      },
-    ],
+    artists: [artistsData[0]],
     available_markets: available_markets,
     genres: [],
     href: "https://api.spotify.com/v1/albums/0zicd2mBV8HTzSubByj4vP",
@@ -299,38 +271,7 @@ module.exports.albumsData = [
     total_tracks: 1,
     type: "album",
     uri: "spotify:album:0zicd2mBV8HTzSubByj4vP",
-    tracks: [
-      {
-        artists: [
-          {
-            external_urls: {
-              spotify: "https://open.spotify.com/artist/4O15NlyKLIASxsJ0PrXPfz",
-            },
-            href: "https://api.spotify.com/v1/artists/4O15NlyKLIASxsJ0PrXPfz",
-            id: "4O15NlyKLIASxsJ0PrXPfz",
-            name: "Lil Uzi Vert",
-            type: "artist",
-            uri: "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
-          },
-        ],
-        available_markets: available_markets,
-        disc_number: 1,
-        duration_ms: 220586,
-        explicit: true,
-        external_urls: {
-          spotify: "https://open.spotify.com/track/0uxSUdBrJy9Un0EYoBowng",
-        },
-        href: "https://api.spotify.com/v1/tracks/0uxSUdBrJy9Un0EYoBowng",
-        id: "0uxSUdBrJy9Un0EYoBowng",
-        is_local: false,
-        name: "20 Min",
-        preview_url:
-          "https://p.scdn.co/mp3-preview/839fb8d9ef7958acb49153a4d8e00d2d7f117d2d?cid=774b29d4f13844c495f206cafdad9c86",
-        track_number: 20,
-        type: "track",
-        uri: "spotify:track:0uxSUdBrJy9Un0EYoBowng",
-      },
-    ],
+    tracks: [trackIds[0], trackIds[1]],
     limit: 50,
     next: null,
     offset: 0,
@@ -338,3 +279,53 @@ module.exports.albumsData = [
     total: 1,
   },
 ];
+
+const tracksData = [
+  {
+    album: albumIds[0],
+    artists: [artistIds[0]],
+    available_markets: available_markets,
+    disc_number: 1,
+    duration_ms: 220586,
+    explicit: true,
+    href: "https://api.spotify.com/v1/tracks/0uxSUdBrJy9Un0EYoBowng",
+    id: "0uxSUdBrJy9Un0EYoBowng",
+    is_local: false,
+    name: "20 Min",
+    track_number: 20,
+    uri: "spotify:track:0uxSUdBrJy9Un0EYoBowng",
+  },
+  {
+    album: albumIds[0],
+    artists: [artistIds[0]],
+    available_markets: available_markets,
+    disc_number: 1,
+    duration_ms: 182706,
+    explicit: true,
+    href: "https://api.spotify.com/v1/tracks/3EWaR09H3TkRgaLTIheYFr",
+    id: "3EWaR09H3TkRgaLTIheYFr",
+    is_local: false,
+    name: "XO Tour Llif3",
+    track_number: 16,
+    uri: "spotify:track:3EWaR09H3TkRgaLTIheYFr",
+  },
+];
+
+const sleep = () => {
+  //don't feel like sleeping
+};
+
+module.exports = {
+  getTrack,
+  getArtist,
+  getAlbum,
+  getAlbumTracks,
+  sleep,
+  search,
+  trackIds,
+  albumIds,
+  artistIds,
+  artistsData,
+  albumsData,
+  tracksData,
+};

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const ArtistSchema = new mongoose.Schema({
-  id: {
+  spotifyId: {
     type: String,
     required: true,
     unique: true,

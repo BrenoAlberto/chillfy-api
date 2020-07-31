@@ -4,7 +4,7 @@ async function insertTrack(newData) {
   try {
     const track = new Track(newData);
     await track.save();
-    track.populate("album").populate("artists").populate("samples.id");
+    track.populate("album").populate("artists").populate("samples._id");
     return track;
   } catch (e) {
     console.log(e);
@@ -14,9 +14,13 @@ async function insertTrack(newData) {
 async function updateTrack(id, newData) {
   try {
     const updateQuery = { $set: newData };
-    return await Track.findOneAndUpdate({ id }, updateQuery, {
+    return await Track.findOneAndUpdate({ spotifyId: id }, updateQuery, {
       new: true,
-    }).exec();
+    })
+      .populate("album")
+      .populate("artists")
+      .populate("samples._id")
+      .exec();
   } catch (e) {
     console.log(e);
   }
@@ -27,7 +31,7 @@ async function getTrack(conditions, optionalFields = {}) {
     const track = await Track.findOne(conditions, optionalFields)
       .populate("album")
       .populate("artists")
-      .populate("samples.id")
+      .populate("samples._id")
       .exec();
     return track;
   } catch (e) {
@@ -38,13 +42,11 @@ async function getTrack(conditions, optionalFields = {}) {
 
 async function getTracks(conditions, optionalFields = {}) {
   try {
-    const tracks = await Track.find(conditions, optionalFields)
+    return await Track.find(conditions, optionalFields)
       .populate("album")
       .populate("artists")
-      .populate("samples")
-      .populate("sampledIn")
+      .populate("samples._id")
       .exec();
-    return tracks;
   } catch (e) {
     console.log(e);
   }

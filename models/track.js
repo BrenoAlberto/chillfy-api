@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const TrackSchema = new mongoose.Schema({
-  id: {
+  spotifyId: {
     type: String,
     required: true,
     unique: true,
@@ -20,13 +20,17 @@ const TrackSchema = new mongoose.Schema({
   uri: String,
   samples: [
     {
-      _id: false,
-      id: { type: mongoose.Schema.Types.ObjectId, ref: "Track" },
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: "Track" },
       sample_ms: Number,
       type: {
         type: String,
         enum: ["sample", "sampledIn", "coveredIn"],
       },
+      // contributors: [{type: }]
+      // verified: {
+      //   type: Boolean,
+      //   default: false,
+      // },
     },
   ],
   ws_crawled: Boolean,

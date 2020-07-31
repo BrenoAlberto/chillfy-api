@@ -2,7 +2,7 @@ const Artist = require("mongoose").model("Artist");
 
 async function insertArtist(newData) {
   try {
-    let artist = await getArtist({ id: newData.id });
+    let artist = await getArtist({ spotifyId: newData.id });
     if (!artist) {
       artist = new Artist(newData);
       await artist.save();

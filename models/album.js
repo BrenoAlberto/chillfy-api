@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const AlbumSchema = new mongoose.Schema({
-  id: {
+  spotifyId: {
     type: String,
     required: true,
     unique: true,
@@ -21,6 +21,7 @@ const AlbumSchema = new mongoose.Schema({
   release_date: String,
   release_date_precision: String,
   tracks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Track" }],
+  allTracksSaved: Boolean,
   uri: String,
 });
 

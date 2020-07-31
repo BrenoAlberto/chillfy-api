@@ -2,7 +2,7 @@ const Album = require("mongoose").model("Album");
 
 async function insertAlbum(newData) {
   try {
-    let album = await getAlbum({ id: newData.id });
+    let album = await getAlbum({ spotifyId: newData.id });
     if (!album) {
       album = new Album(newData);
       await album.save();
@@ -16,7 +16,9 @@ async function insertAlbum(newData) {
 async function updateAlbum(id, newData) {
   try {
     const updateQuery = { $set: newData };
-    return await Album.updateOne({ id }, updateQuery, { new: true }).exec();
+    return await Album.updateOne({ spotifyId: id }, updateQuery, {
+      new: true,
+    }).exec();
   } catch (e) {
     console.log(e);
   }

@@ -28,8 +28,8 @@ describe("Mongo utils ", () => {
 
       pushReferenceToDocument(track, artist._id, "artists");
 
-      expect(track.artists.length).toEqual(1);
-      expect(track.artists[0]).toEqual(artist._id);
+      expect(track.artists.length).toEqual(2);
+      expect(track.artists[1]).toEqual(artist._id);
     });
     it("When insert a artist reference to a document with artists reference, insert reference successfully and return document", async () => {
       const mockTrack = spotifyApiMock.tracksData[0];
@@ -52,8 +52,9 @@ describe("Mongo utils ", () => {
       pushReferenceToDocument(track, artist1._id, "artists");
       pushReferenceToDocument(track, artist2._id, "artists");
 
-      expect(track.artists.length).toEqual(2);
-      expect(track.artists[0]).toEqual(artist1._id);
+      expect(track.artists.length).toEqual(3);
+      expect(track.artists[1]).toEqual(artist1._id);
+      expect(track.artists[2]).toEqual(artist2._id);
     });
   });
 });

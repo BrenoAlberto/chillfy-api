@@ -1,4 +1,5 @@
 const SpotifyWebApi = require("spotify-web-api-node");
+const { sleep } = require("../utils/util");
 const moment = require("moment");
 require("dotenv").config();
 
@@ -30,6 +31,8 @@ async function setSpotifyApi({ access_token, refresh_token, refresh_at }) {
   });
   spotifyApi.setAccessToken(access_token);
   spotifyApi.setRefreshToken(refresh_token);
+
+  spotifyApi.sleep = sleep;
 
   if (timeToRefresh)
     spotifyApi.setAccessToken(

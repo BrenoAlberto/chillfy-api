@@ -2,31 +2,21 @@ const router = require("express").Router();
 const { ensureAuthenticated, setSpotifyApi } = require("../services/spotify");
 const trackService = require("../services/track");
 const trackRepository = require("../repository/track");
-const queueRepository = require("../repository/queue");
+const queueService = require("../services/queue");
 router.get("/:id", ensureAuthenticated, async (req, res) => {
   try {
     const spotifyApi = await setSpotifyApi(req.headers);
     const id = req.params.id;
 
-    let track = await trackRepository.getTrack({ id });
+    const track = await trackService.getSertTrack(spotifyApi, id);
 
-    if (!track) track = await trackService.insertTrack(spotifyApi, id);
-
-    if (!track.ws_crawled) {
-      await queueRepository.insertItem({
-        type: "getSamples",
-        data: {
-          id,
-          artist: track.artists[0].name,
-          track: track.name,
-          spotifyCredentials: {
-            access_token: req.headers.access_token,
-            refresh_token: req.headers.refresh_token,
-            refresh_at: req.headers.refresh_at,
-          },
-        },
-        date: Date.now(),
-      });
+    if (track && !track.ws_crawled && track.artist.length) {
+      await queueService.insertGetSamples(
+        id,
+        track.artists[0].name,
+        track.name,
+        req.headers
+      );
     }
 
     return res.status(200).json(track);
