@@ -1,14 +1,14 @@
-const pushReferenceToDocument = (document, reference, referenceField) => {
+const pushReferenceToDocument = (document, referenceId, referenceField) => {
   if (document[referenceField]) {
     let alreadyRegistered = false;
 
     document[referenceField].forEach((registeredReference) => {
-      if (registeredReference._id === reference._id) alreadyRegistered = true;
+      if (registeredReference._id === referenceId) alreadyRegistered = true;
     });
 
-    if (!alreadyRegistered) document[referenceField].push(reference._id);
+    if (!alreadyRegistered) document[referenceField].push(referenceId);
   } else {
-    document[referenceField] = [reference._id];
+    document[referenceField] = [referenceId];
   }
 
   return document;
