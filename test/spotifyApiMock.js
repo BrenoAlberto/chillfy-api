@@ -148,6 +148,19 @@ const getAlbumTracks = (id, options) => {
   };
 };
 
+const getArtistAlbums = (id, options) => {
+  const albums = albumsData.filter(
+    (albumData) => albumData.artists[0].id === id
+  );
+
+  return {
+    body: {
+      total: albums.length,
+      items: albums,
+    },
+  };
+};
+
 const artistIds = [
   "4O15NlyKLIASxsJ0PrXPfz",
   "5yPzzu25VzEk8qrGTLIrE1",
@@ -319,6 +332,7 @@ module.exports = {
   getTrack,
   getArtist,
   getAlbum,
+  getArtistAlbums,
   getAlbumTracks,
   sleep,
   search,
