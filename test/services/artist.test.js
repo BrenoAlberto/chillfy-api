@@ -20,7 +20,7 @@ describe("Artist Service ", () => {
 
       expect(artist).toHaveProperty("_id");
       expect(artist.name).toEqual(mockArtistData.name);
-      expect(artist.spotifyId).toEqual(mockArtistData.id);
+      expect(artist.spotifyArtistId).toEqual(mockArtistData.id);
     });
   });
 });

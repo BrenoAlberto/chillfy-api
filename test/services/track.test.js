@@ -20,7 +20,7 @@ describe("Track Service ", () => {
 
       expect(track).toHaveProperty("_id");
       expect(track.name).toEqual(mockTrack.name);
-      expect(track.spotifyId).toEqual(mockTrack.id);
+      expect(track.spotifyTrackId).toEqual(mockTrack.id);
     });
   });
   describe("Insert sample", () => {
@@ -31,7 +31,7 @@ describe("Track Service ", () => {
       const mockSampleId = spotifyApiMock.trackIds[1];
       track = await trackService.insertSample(
         spotifyApiMock,
-        track.spotifyId,
+        track.spotifyTrackId,
         mockSampleId,
         "sample"
       );
@@ -40,7 +40,7 @@ describe("Track Service ", () => {
       expect(track.samples).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            _id: expect.objectContaining({ spotifyId: mockSampleId }),
+            _id: expect.objectContaining({ spotifyTrackId: mockSampleId }),
           }),
         ])
       );
@@ -59,7 +59,7 @@ describe("Track Service ", () => {
         expect.arrayContaining([
           expect.objectContaining({
             album: expect.objectContaining({
-              spotifyId: mockAlbumId,
+              spotifyAlbumId: mockAlbumId,
             }),
           }),
         ])
