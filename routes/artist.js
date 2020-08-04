@@ -5,18 +5,23 @@ const albumService = require("../services/album");
 const trackService = require("../services/track");
 
 router.get("/:id", ensureAuthenticated, async (req, res) => {
-  const id = req.params.id;
+  const spotifyArtistId = req.params.id;
   try {
     const spotifyApi = await setSpotifyApi(req.headers);
-    const artist = await artistService.getsertArtist(spotifyApi, id);
+    const artist = await artistService.getsertArtist(
+      spotifyApi,
+      spotifyArtistId
+    );
 
     if (artist) {
-      const albumsIds = await albumService.insertAlbums(spotifyApi, id);
+      const albums = await albumService.getsertArtistAlbums(
+        spotifyApi,
+        spotifyArtistId
+      );
+      for (let i = 0; i < albums.length; i++) {
+        const spotifyAlbumId = albums[i].spotifyAlbumId;
 
-      for (let i = 0; i < albumsIds.length; i++) {
-        const albumId = albumsIds[i];
-
-        await trackService.getsertAlbumTracks(spotifyApi, albumId);
+        await trackService.getsertAlbumTracks(spotifyApi, spotifyAlbumId);
       }
     }
 

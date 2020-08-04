@@ -1,7 +1,7 @@
 const queueRepository = require("../repository/queue");
 
 const insertGetSamples = async (
-  trackId,
+  spotifyTrackId,
   artistName,
   trackName,
   { access_token, refresh_token, refresh_at }
@@ -9,7 +9,7 @@ const insertGetSamples = async (
   return await queueRepository.insertItem({
     type: "getSamples",
     data: {
-      spotifyId: trackId,
+      spotifyTrackId,
       artist: artistName,
       track: trackName,
       spotifyCredentials: {

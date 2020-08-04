@@ -2,21 +2,18 @@ const Album = require("mongoose").model("Album");
 
 async function insertAlbum(newData) {
   try {
-    let album = await getAlbum({ spotifyId: newData.id });
-    if (!album) {
-      album = new Album(newData);
-      await album.save();
-    }
+    const album = new Album(newData);
+    await album.save();
     return album;
   } catch (e) {
     console.log(e);
   }
 }
 
-async function updateAlbum(id, newData) {
+async function updateAlbum(spotifyAlbumId, newData) {
   try {
     const updateQuery = { $set: newData };
-    return await Album.updateOne({ spotifyId: id }, updateQuery, {
+    return await Album.updateOne({ spotifyAlbumId }, updateQuery, {
       new: true,
     }).exec();
   } catch (e) {
@@ -37,8 +34,22 @@ async function getAlbum(conditions, optionalFields = {}) {
   }
 }
 
+async function getAlbums(conditions, optionalFields = {}) {
+  try {
+    const albums = await Album.find(conditions, optionalFields)
+      .populate("artists")
+      .populate("tracks")
+      .exec();
+    return albums;
+  } catch (e) {
+    console.log(e);
+    // return authErr.ERROR_READING_USER;
+  }
+}
+
 module.exports = {
   insertAlbum,
   updateAlbum,
   getAlbum,
+  getAlbums,
 };

@@ -8,29 +8,29 @@ const { structuredClone } = require("../utils/util");
 
 async function insertSample(
   spotifyApi,
-  trackId,
-  sampledId,
+  spotifyTrackId,
+  spotifySampleId,
   sampleType,
   trackData,
   sampleData
 ) {
-  let track = await getsertTrack(spotifyApi, trackId, trackData);
-  const sample = await getsertTrack(spotifyApi, sampledId, sampleData);
+  let track = await getsertTrack(spotifyApi, spotifyTrackId, trackData);
+  const sample = await getsertTrack(spotifyApi, spotifySampleId, sampleData);
 
   if (track && sample) {
     track = _pushSampleToTrack(track, sample, sampleType);
 
-    return await trackRepository.updateTrack(trackId, {
+    return await trackRepository.updateTrack(spotifyTrackId, {
       samples: track.samples,
     });
   }
 }
 
-async function getsertTrack(spotifyApi, id, trackData) {
+async function getsertTrack(spotifyApi, spotifyTrackId, trackData) {
   let track;
-  if (id) {
-    track = await trackRepository.getTrack({ spotifyId: id });
-    if (!track) track = await _insertTrack(spotifyApi, id);
+  if (spotifyTrackId) {
+    track = await trackRepository.getTrack({ spotifyTrackId });
+    if (!track) track = await _insertTrack(spotifyApi, spotifyTrackId);
   } else {
     const searchResultItems = await searchTrack(spotifyApi, trackData);
 
@@ -49,35 +49,38 @@ async function searchTrack(spotifyApi, { artist, track }) {
   return searchResult.items;
 }
 
-async function getsertAlbumTracks(spotifyApi, albumId) {
-  let album = await albumService.getsertAlbum(spotifyApi, albumId);
+async function getsertAlbumTracks(spotifyApi, spotifyAlbumId) {
+  let album = await albumService.getsertAlbum(spotifyApi, spotifyAlbumId);
 
   if (!album.allTracksSaved) {
     await spotifyApi.sleep(300);
-    const tracks = await _fetchAlbumTracks(spotifyApi, albumId);
+    const tracks = await _fetchAlbumTracks(spotifyApi, spotifyAlbumId);
 
     for (let i = 0; i < tracks.length; i++) {
       let track = tracks[i];
+      track.album = album.spotifyAlbumId;
 
       track = await _insertTrack(spotifyApi, track.id, track);
 
-      album = pushReferenceToDocument(album, track._id, "tracks");
+      pushReferenceToDocument(album, track._id, "tracks");
     }
 
-    await albumRepository.updateAlbum(album.spotifyId, {
+    await albumRepository.updateAlbum(album.spotifyAlbumId, {
       tracks: album.tracks,
+      allTracksSaved: true,
     });
   }
 
+  //TODO group tracks and albuns before return
   return await trackRepository.getTracks({
     album: album._id,
   });
 }
 
-async function _insertTrack(spotifyApi, trackId, track) {
+async function _insertTrack(spotifyApi, spotifyTrackId, track) {
   if (!track) {
     await spotifyApi.sleep(300);
-    track = (await spotifyApi.getTrack(trackId)).body;
+    track = (await spotifyApi.getTrack(spotifyTrackId)).body;
   }
 
   const newTrackData = _setTrackData(track);
@@ -86,7 +89,7 @@ async function _insertTrack(spotifyApi, trackId, track) {
 
   for (let i = 0; i < track.artists.length; i++) {
     const trackArtist = track.artists[i];
-    const trackArtistId = trackArtist.id ? trackArtist.id : trackArtist;
+    const trackArtistId = trackArtist.id ? trackArtist.id : trackArtist; //TODO check this
 
     const artist = await artistService.getsertArtist(spotifyApi, trackArtistId);
 
@@ -97,15 +100,15 @@ async function _insertTrack(spotifyApi, trackId, track) {
 }
 
 //TODO maybe rename this
-async function _fetchAlbumTracks(spotifyApi, albumId) {
-  let response = await spotifyApi.getAlbumTracks(albumId, { limit: 50 });
+async function _fetchAlbumTracks(spotifyApi, spotifyAlbumId) {
+  let response = await spotifyApi.getAlbumTracks(spotifyAlbumId, { limit: 50 });
   let tracks = response.body.items;
   const totalPages = response.body.total / 50;
 
   for (let i = 0; i <= totalPages.length; i++) {
     const offset = i * 50;
 
-    response = await spotifyApi.getAlbumTracks(albumId, {
+    response = await spotifyApi.getAlbumTracks(spotifyAlbumId, {
       limit: 50,
       offset,
     });
@@ -127,7 +130,7 @@ const _setTrackData = ({
   uri,
 }) => {
   return structuredClone({
-    spotifyId: id,
+    spotifyTrackId: id,
     name,
     track_number,
     duration_ms,

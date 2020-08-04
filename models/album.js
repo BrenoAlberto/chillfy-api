@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const AlbumSchema = new mongoose.Schema({
-  spotifyId: {
+  spotifyAlbumId: {
     type: String,
     required: true,
     unique: true,

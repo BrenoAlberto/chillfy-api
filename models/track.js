@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const TrackSchema = new mongoose.Schema({
-  spotifyId: {
+  spotifyTrackId: {
     type: String,
     required: true,
     unique: true,

@@ -2,13 +2,13 @@ const artistRepository = require("../repository/artist");
 
 //TODO refactor this function so it makes less request to spotify
 
-async function _insertArtist(spotifyApi, artistId) {
+async function _insertArtist(spotifyApi, spotifyArtistId) {
   try {
-    let artist = await artistRepository.getArtist({ spotifyId: artistId });
+    let artist = await artistRepository.getArtist({ spotifyArtistId });
 
     if (!artist) {
       await spotifyApi.sleep(300);
-      artist = (await spotifyApi.getArtist(artistId)).body;
+      artist = (await spotifyApi.getArtist(spotifyArtistId)).body;
 
       const newArtistData = _setArtistData(artist);
 
@@ -23,7 +23,7 @@ async function _insertArtist(spotifyApi, artistId) {
 
 function _setArtistData({ id, images, genres, name, href, uri }) {
   return {
-    spotifyId: id,
+    spotifyArtistId: id,
     images,
     genres,
     name,
@@ -32,9 +32,9 @@ function _setArtistData({ id, images, genres, name, href, uri }) {
   };
 }
 
-async function getsertArtist(spotifyApi, artistId) {
-  let artist = await artistRepository.getArtist({ spotifyId: artistId });
-  if (!artist) artist = await _insertArtist(spotifyApi, artistId);
+async function getsertArtist(spotifyApi, spotifyArtistId) {
+  let artist = await artistRepository.getArtist({ spotifyArtistId });
+  if (!artist) artist = await _insertArtist(spotifyApi, spotifyArtistId);
   return artist;
 }
 

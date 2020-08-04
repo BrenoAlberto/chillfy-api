@@ -11,10 +11,10 @@ async function insertTrack(newData) {
   }
 }
 
-async function updateTrack(id, newData) {
+async function updateTrack(spotifyTrackId, newData) {
   try {
     const updateQuery = { $set: newData };
-    return await Track.findOneAndUpdate({ spotifyId: id }, updateQuery, {
+    return await Track.findOneAndUpdate({ spotifyTrackId }, updateQuery, {
       new: true,
     })
       .populate("album")
